@@ -4,5 +4,8 @@
   "description": "Simple hello from node handler",
   "main": "app.js",
   "author": "Carlos Martinez",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "sinon": "^6.1.3"
+  }
 }
