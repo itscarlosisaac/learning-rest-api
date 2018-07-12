@@ -2,7 +2,10 @@
   "catalog": [
     {
       "categoryName": "Watches",
-      "categoryId": "0"
+      "categoryId": "0",
+      "items": [
+        
+      ]
     },
     {
       "categoryName": "Jewelery",
@@ -13,12 +16,32 @@
           "itemName": "Item name here",
           "price": 180,
           "currency": "USD"
+        },
+        {
+          "itemId": "1",
+          "itemName": "Item name here",
+          "price": 324,
+          "currency": "DOP"
         }
       ]
     },
     {
       "categoryName": "Sports",
-      "categoryId": "2"
+      "categoryId": "2",
+      "items": [
+        {
+          "itemId": "0",
+          "itemName": "Item name here",
+          "price": 332,
+          "currency": "CAD"
+        },
+        {
+          "itemId": "1",
+          "itemName": "Item name here",
+          "price": 675,
+          "currency": "DOP"
+        }
+      ]
     }
   ]
 }

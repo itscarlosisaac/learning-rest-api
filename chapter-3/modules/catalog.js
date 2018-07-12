@@ -14,37 +14,50 @@ function readCatalogSync(){
 exports.findItems = function(categoryId){
   console.log('Return all items for the category Id: ', categoryId );
   var catalog = readCatalogSync();
-  if(catalog){
-    var items = [];
-    for( var index in catalog.catalog) {
-      if(catalog.catalog[index].categoryId === categoryId ){
-        var category = catalog.catalog[index];
-        console.log(category)
-        for( var itemIndex in category.items){
-          items.push(category.items[itemIndex])
-        }
-      }
-    }
+  // Optimized
+  if( catalog ){
+    let items = []
+    catalog.catalog.map( (item) => item.categoryId === categoryId ? items.push(...item["items"] ) : null );
     return items;
   }
+  // if(catalog){
+  //   var items = [];
+  //   for( var index in catalog.catalog) {
+  //     if(catalog.catalog[index].categoryId === categoryId ){
+  //       var category = catalog.catalog[index];
+  //       console.log(category)
+  //       for( var itemIndex in category.items){
+  //         items.push(category.items[itemIndex])
+  //       }
+  //     }
+  //   }
+  //   return items;
+  // }
   return undefined;
 }
 
 exports.findItem = function(categoryId, itemId){
   console.log('Return an item with the id:', itemId)
   var catalog = readCatalogSync();
+
+  // Optimized
   if( catalog ){
-    for( index in catalog.catalog){
-      if ( catalog.catalog[index].categoryId === categoryId){
-        var category = catalog.catalog[index];
-        for( var itemIndex in category.items){
-          if( category.items[itemIndex].itemId === itemId ){
-            return category.items[itemIndex]
-          }
-        }
-      }
-    }
+    let cat = catalog.catalog.filter( item => item.categoryId == categoryId );
+    let product = cat[0].items.filter( item => item.itemId === itemId )
+    return product[0]
   }
+  // if( catalog ){
+  //   for( index in catalog.catalog){
+  //     if ( catalog.catalog[index].categoryId === categoryId){
+  //       var category = catalog.catalog[index];
+  //       for( var itemIndex in category.items){
+  //         if( category.items[itemIndex].itemId === itemId ){
+  //           return category.items[itemIndex]
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
   return undefined
 }
 
