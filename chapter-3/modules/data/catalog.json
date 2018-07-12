@@ -1,0 +1,24 @@
+{
+  "catalog": [
+    {
+      "categoryName": "Watches",
+      "categoryId": "0"
+    },
+    {
+      "categoryName": "Jewelery",
+      "categoryId": "1",
+      "items": [
+        {
+          "itemId": "0",
+          "itemName": "Item name here",
+          "price": 180,
+          "currency": "USD"
+        }
+      ]
+    },
+    {
+      "categoryName": "Sports",
+      "categoryId": "2"
+    }
+  ]
+}
