@@ -13,51 +13,23 @@ function readCatalogSync(){
 
 exports.findItems = function(categoryId){
   console.log('Return all items for the category Id: ', categoryId );
-  var catalog = readCatalogSync();
-  // Optimized
-  if( catalog ){
+  var catalogs = readCatalogSync();
+  if( catalogs ){
     let items = []
-    catalog.catalog.map( (item) => item.categoryId === categoryId ? items.push(...item["items"] ) : null );
+    catalogs.catalog.map( obj => obj.categoryId === categoryId ? items.push(...obj["items"] ) : [] );
     return items;
   }
-  // if(catalog){
-  //   var items = [];
-  //   for( var index in catalog.catalog) {
-  //     if(catalog.catalog[index].categoryId === categoryId ){
-  //       var category = catalog.catalog[index];
-  //       console.log(category)
-  //       for( var itemIndex in category.items){
-  //         items.push(category.items[itemIndex])
-  //       }
-  //     }
-  //   }
-  //   return items;
-  // }
   return undefined;
 }
 
 exports.findItem = function(categoryId, itemId){
   console.log('Return an item with the id:', itemId)
   var catalog = readCatalogSync();
-
-  // Optimized
   if( catalog ){
     let cat = catalog.catalog.filter( item => item.categoryId == categoryId );
     let product = cat[0].items.filter( item => item.itemId === itemId )
     return product[0]
   }
-  // if( catalog ){
-  //   for( index in catalog.catalog){
-  //     if ( catalog.catalog[index].categoryId === categoryId){
-  //       var category = catalog.catalog[index];
-  //       for( var itemIndex in category.items){
-  //         if( category.items[itemIndex].itemId === itemId ){
-  //           return category.items[itemIndex]
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
   return undefined
 }
 
@@ -69,17 +41,6 @@ exports.findCategories = function(){
       return { categoryId: item["categoryId"], categoryName: item["categoryName"] }
     })
   }
-  // return catalog ? catalog.catalog.map( item => item) : []
-  // if(catalog){
-  //   // var categories = []
-  //   // for( var index in catalog.catalog) {
-  //   //   var category = {};
-  //   //   category["categorId"] = catalog.catalog[index].categoryId
-  //   //   category["categoryName"] = catalog.catalog[index].categoryName;
-  //   //   categories.push(category)
-  //   // }
-  //   return categories
-  // }
-  // return [];
+  return []
 }
 

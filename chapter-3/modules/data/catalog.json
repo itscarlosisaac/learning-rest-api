@@ -3,13 +3,14 @@
     {
       "categoryName": "Watches",
       "categoryId": "0",
+      "itemsCount" : 0,
       "items": [
-        
       ]
     },
     {
       "categoryName": "Jewelery",
       "categoryId": "1",
+      "itemsCount" : 2,
       "items": [
         {
           "itemId": "0",
@@ -28,6 +29,7 @@
     {
       "categoryName": "Sports",
       "categoryId": "2",
+      "itemsCount" : 2,
       "items": [
         {
           "itemId": "0",
