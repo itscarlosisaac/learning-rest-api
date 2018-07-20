@@ -75,11 +75,10 @@ exports.updateItem = function(request, response){
     }else {
       console.log('Updating existing item', item.itemName);
       console.log(result)
-      result.itemId = item.itemId;
-      result.itemName = item.itemName;
-      result.price = item.price;
-      result.currency = item.currency;
-      result.categories = item.categories;
+      
+      for( key in item ){
+        result[key] = item[key]
+      }
       result.save();
       response.json(JSON.stringify(result)) 
     }
