@@ -42,9 +42,9 @@ router.delete('/v1/item/:itemId', function(request, response, next){
 })
 
 router.get('/', function(request, response ) {
-  console.log('Redirecting to v1');
-  response.writeHead(301, {'Location': '/catalog/v1/'});
-  response.end('Version 1 is moved to /catalog/v1/')
+  console.log('Redirecting to v2');
+  response.writeHead(301, {'Location': '/catalog/v2/'});
+  response.end('Version 2 is moved to /catalog/v2/')
 })
 
 // V2 Routes

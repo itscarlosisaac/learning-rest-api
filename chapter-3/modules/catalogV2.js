@@ -300,8 +300,8 @@ exports.paginate = function(model, request, response){
   if( page === undefined ){
     page = 1;
   }
-
-  model.paginate({}, {page: page, limit: pageSize},
+  console.log(request.query)
+  model.paginate({}, {page: Math.abs(page), limit: Math.abs(pageSize)},
     function(error, result){
       if( error ){
         console.log(error);
