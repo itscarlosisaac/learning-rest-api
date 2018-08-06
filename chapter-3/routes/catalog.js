@@ -4,27 +4,21 @@ const catalogV2 = require('../modules/catalogV2')
 const model = require('../model/item');
 const url = require('url')
 
+const mongoose = require('mongoose');
+const Grid = require('gridfs-stream');
+
+mongoose.connect('mongodb://localhost:27017/catalog', { useNewUrlParser: true })
+var db = mongoose.connection.collection;
+var gfs = Grid(db, mongoose.mongo);
+
+
 router.get('/v1/', function(request, response, next){
   catalog.findAllItems(response);
 });
 
-router.get('/v1/items/:itemId', function(request, response, next){
+router.get('/v1/item/:itemId', function(request, response, next){
   console.log(`${request.url} querying for ${request.params.itemId}`)
   catalog.findItemById(request.params.itemId, response)
-})
-
-router.get('/v2/items/', function(request, response, next){
-  var getParams = url.parse(request.url, true).query;
-  if( Object.keys(getParams).length === 0){
-    catalogV2.findAllItems(response);
-
-  }else{
-    console.log(getParams)
-    var key = Object.keys(getParams);
-    var value = getParams[key];
-
-    catalogV2.findItemByAttribute( getParams, response)
-  }
 })
 
 router.get('/v1/:categoryId', function(request, response, next){
@@ -37,7 +31,7 @@ router.post('/v1/', function(request, response, next){
   catalog.saveItem(request, response);
 })
 
-router.put('/v1/', function(request, response, next){
+router.put('/v1/:itemId', function(request, response, next){
   console.log('Saving item using PUT');
   catalog.updateItem(request, response);
 })
@@ -53,32 +47,60 @@ router.get('/', function(request, response ) {
   response.end('Version 1 is moved to /catalog/v1/')
 })
 
-// OLD LOCAL
+// V2 Routes
 
-// router.get('/', function(req, res, next){
-//   const categories = catalog.findCategories();
-//   res.json(categories)
+router.get('/v2/items/', function(request, response, next){
+  var getParams = url.parse(request.url, true).query;
+  Object.keys(getParams).length === 0 ?
+    catalogV2.findAllItems(response) :
+    catalogV2.findItemByAttribute( getParams, response)
+})
+
+router.get('/v2/item/:itemId', function(request, response, next){
+  console.log(`${request.url} querying for ${request.params.itemId}`)
+  var gfs = Grid(model.connection.db, mongoose.mongo);
+  // response.send(request.params)
+  catalogV2.findItemById(gfs,request, response)
+})
+
+router.get('/v2/item/:itemId/image', function(request, response){
+  console.log( request)
+  var gfs = Grid(model.connection.db, mongoose.mongo);
+  catalogV2.getImage(gfs, request, response)
+});
+
+router.post('/v2/item/:itemId/image', function(request, response){
+  var gfs = Grid(model.connection.db, mongoose.mongo);
+  console.log("hello from post route")
+  catalogV2.saveImage(gfs, request, response);
+});
+
+router.put('/v2/item/:itemId/image', function(request, response){
+  var gfs = Grid(model.connection.db, mongoose.mongo);
+  catalogV2.saveImage(gfs, request, response)
+});
+
+router.delete('/v2/item/:itemId/image', function(request, response){
+  var gfs =  Grid(model.connection.db, mongoose.model);
+  catalogV2.deleteImage(gfs, model.connection, request.params.itemId, response)
+});
+
+// router.get('/item/:itemId/image', function(request, response){
+//   var gfs = Grid(model.connection.db, mongoose.mongo);
+//   catalogV2.getImage(gfs, request, response)
 // });
 
-// router.get('/:categoryId', function(req, res, next){
-//   const categories = catalog.findItems(req.params.categoryId);
-//   if( categories === undefined){
-//     res.writeHead(404, {'Content-Type': 'text/plain'});
-//     res.end('Not Found')
-//   }else{
-//     res.json(categories)
-//   }
+// router.post('/item/:itemId/image', function(request, response){
+//   var gfs = Grid(model.connection.db, mongoose.mongo);
+//   catalogV2.saveImage(gfs, request.params.itemId , response)
+// });
+
+// router.delete('/item/:itemId/image', function(request, response){
+//   var gfs =  Grid(model.connection.db, mongoose.model);
+//   catalogV2.deleteImage(gfs, model.connection, request.params.itemId, response)
 // })
 
-// router.get('/:categoryId/:itemId', function(req, res, next){
-//   const item = catalog.findItem(req.params.categoryId, req.params.itemId)
-//   if( item === undefined ){
-//     res.writeHead(404, {'Content-Type': 'text/plain'});
-//     res.end('Not Found');
-//   }else{
-//     res.json(item);
-//   }
-// })
+
 
 
 module.exports = router;

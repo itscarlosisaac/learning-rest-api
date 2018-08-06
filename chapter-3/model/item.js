@@ -13,4 +13,4 @@ var itemSchema = new Schema({
 
 var CatalogItem = mongoose.model('Item', itemSchema);
 
-module.exports = {CatalogItem : CatalogItem};
+module.exports = {CatalogItem : CatalogItem, connection: mongoose.connection};

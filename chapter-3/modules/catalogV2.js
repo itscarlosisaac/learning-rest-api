@@ -120,8 +120,9 @@ exports.findItemsByCategory = function(category, response){
   })
 }
 
-exports.findItemById = function(itemId, response){
-  CatalogItem.findOne({itemId: itemId}, function(error, result){
+exports.findItemById = function(gfs, request, response){
+  var ID = request.params.itemId;
+  CatalogItem.findOne({itemId: ID}, function(error, result){
     if ( error ){
       console.error(error);
       console.writeHead(500, {'Content-Type': 'text/plain'});
@@ -134,10 +135,25 @@ exports.findItemById = function(itemId, response){
         }
         return
       }
-      if( response != null){
-        response.setHeader('Content-Type', 'application/json');
-        response.send(result)
-      }
+      var options = {
+        filename: result.itemId
+      };
+      console.log(gfs)
+      gfs.exist(options, function(error, found){
+        if( found ){
+          response.setHeader('Content-Type', 'application/json');
+          var imageUrl = request.protocol + '://' + request.get('host') + request.baseUrl + request.path + '/image';
+          response.setHeader('Image-Url', imageUrl);
+          response.send(result)
+          console.log("Send from image")
+        }else{
+          response.json(result)
+        }
+      });
+      // if( response != null){
+      //   response.setHeader('Content-Type', 'application/json');
+      //   response.send(result)
+      // }
       console.log(result)
     }
   });
@@ -159,8 +175,6 @@ exports.findAllItems = function(response){
 }
 
 exports.findItemByAttribute = function(filter, response ) {
-  // let filter = {};
-  // filter[key] = value;
   CatalogItem.find(filter, function(error, result) {
     if( error){
       console.log(error);
@@ -181,4 +195,81 @@ exports.findItemByAttribute = function(filter, response ) {
       }
     }
   })
+}
+
+// Images functions
+
+exports.saveImage = function(gfs, request, response) {
+  console.log('Save Image')
+  console.log(gfs)
+
+  let writeStream = gfs.createWriteStream({
+    filename: request.params.itemId,
+    mode: 'w'
+  });
+
+  writeStream.on('error', function(error){
+    response.send(500, 'Internal Server Error')
+    console.log(error)
+    return;
+  });
+
+  writeStream.on('close', function(){
+    readImage(gfs, request, response)
+  });
+
+  request.pipe(writeStream);
+}
+
+function readImage(gfs, request, response){
+  var imageStream = gfs.createReadStream({
+    filename: request.params.itemId,
+    mode: 'r'
+  })
+  imageStream.on('error', function(error){
+    console.log(error);
+    response.send('404', 'Not Found');
+    return;
+  })
+  response.setHeader('Content-Type', 'image/jpeg');
+  imageStream.pipe(response);
+}
+
+exports.getImage = function(gfs, itemId, response){
+  readImage(gfs, itemId, response)
+}
+
+exports.deleteImage = function(gfs, mongodb, itemId, response){
+  console.log("Deleting image for item Id" + itemId);
+
+  var options = {
+    filename: itemId
+  }
+  
+  var chunks = mongodb.collection('fs.files.chunks');
+  chunks.remove(options, function(error, image){
+    if( error){
+      console.log(error);
+      response.send('500', "Internal Server Error");
+      return;
+    }else{
+      console.log("Successfully deleted image for item "+ itemId);
+    }
+  });
+
+  var files = mongodb.collection('fs.files');
+  files.remove(options, function(error, image){
+    if( error ){
+      console.log(error);
+      response.send('500', 'Internal Server Error');
+      return;
+    }
+    if( image === null){
+      response.send('404', 'Not Found');
+      return
+    }else{
+      console.log('Successfully deleted image for primary item: ' + itemId);
+      response.json({'deleted': true});
+    }
+  });
 }
