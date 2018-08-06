@@ -12,7 +12,6 @@ const contentTypePlainText = {
 	'Content-Type' : 'text/plain'
 };
 
-
 exports.remove = function(request, response){
   console.log(`Deleting item with the id ${request.body.itemId}`);
   CatalogItem.findOne({itemId: request.params.itemId}, function(error, data){
@@ -231,7 +230,10 @@ function readImage(gfs, request, response){
     response.send('404', 'Not Found');
     return;
   })
+  var itemImageUrl = request.protocol + '://' + request.get('host') + request.baseUrl + request.path;
+  var itemUrl = imageUrl.substring(0, itemImageUrl.indexOf('/image'));  
   response.setHeader('Content-Type', 'image/jpeg');
+  response.setHeader('Item-Url', itemUrl)
   imageStream.pipe(response);
 }
 
@@ -272,4 +274,42 @@ exports.deleteImage = function(gfs, mongodb, itemId, response){
       response.json({'deleted': true});
     }
   });
+}
+
+// CatalogItem.paginate({}, {
+//   page: request.query.page, 
+//   limit: request.query.limit},
+//   function(error, result){
+//     if( error){
+//       console.log(error);
+//       response.writeHead('500', {'Content-Type': 'text/plain'})
+//       response.end('Internal Server Error');
+//     }else{
+//       response.json(result)
+//     }
+//   }
+// )
+
+exports.paginate = function(model, request, response){
+  
+  var pageSize = request.query.limit;
+  var page = request.query.page;
+  if( pageSize === undefined ){
+    pageSize = 100
+  }
+  if( page === undefined ){
+    page = 1;
+  }
+
+  model.paginate({}, {page: page, limit: pageSize},
+    function(error, result){
+      if( error ){
+        console.log(error);
+        response.writeHead('500', { 'Content-Type': 'text/plain' });
+        response.end('Internal Server Error');
+      }else{
+        response.json(result);
+      }
+    }
+  );
 }

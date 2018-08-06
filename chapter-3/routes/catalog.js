@@ -51,9 +51,13 @@ router.get('/', function(request, response ) {
 
 router.get('/v2/items/', function(request, response, next){
   var getParams = url.parse(request.url, true).query;
-  Object.keys(getParams).length === 0 ?
-    catalogV2.findAllItems(response) :
-    catalogV2.findItemByAttribute( getParams, response)
+  if( getParams['page'] !== null || getParams['limit'] !== null ){
+    catalogV2.paginate(model.CatalogItem, request, response )
+  }else{
+    Object.keys(getParams).length === 0 ?
+      catalogV2.findAllItems(response) :
+      catalogV2.findItemByAttribute( getParams, response)
+  }
 })
 
 router.get('/v2/item/:itemId', function(request, response, next){
