@@ -4,6 +4,8 @@ const catalogV2 = require('../modules/catalogV2')
 const model = require('../model/item');
 const url = require('url')
 
+const CacheControl = require('express-cache-control');
+const cache = new CacheControl().middleware;
 const mongoose = require('mongoose');
 const Grid = require('gridfs-stream');
 
@@ -49,7 +51,7 @@ router.get('/', function(request, response ) {
 
 // V2 Routes
 
-router.get('/v2/items/', function(request, response, next){
+router.get('/v2/', cache('minutes', 1), function(request, response, next){
   var getParams = url.parse(request.url, true).query;
   if( getParams['page'] !== null || getParams['limit'] !== null ){
     catalogV2.paginate(model.CatalogItem, request, response )
