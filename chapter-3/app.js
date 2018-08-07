@@ -7,7 +7,8 @@ var expressPaginate = require('express-paginate')
 var indexRouter = require('./routes/index');
 var catalogRouter = require('./routes/catalog');
 
-
+var SwaggerUI = require('swagger-ui-express')
+var swaggerDocument = require('./static/swagger.json')
 var limit = 4
 var maxLimit = 10
 
@@ -24,6 +25,9 @@ app.use(express.json({ extended: true, limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use( '/catalog/api-docs', SwaggerUI.serve, SwaggerUI.setup(swaggerDocument) );
+
 
 app.use('/', indexRouter);
 app.use('/catalog', catalogRouter);
