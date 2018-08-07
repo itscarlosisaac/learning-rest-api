@@ -49,17 +49,10 @@ exports.remove = function(request, response){
 exports.saveItem = function(request, response){
   var item  = toItem(request.body);
   console.log(request.body.itemName)
-  item.save( ( error ) => {
-    if( !error ){
-      console.log('NO ERROR');
-      response.writeHead(201, contentTypeJson );
-      response.end(JSON.stringify(request.body))
-    }else{
-      console.log('Item does not extis. Creating a new one');
-      item.save();
-      response.writeHead(500, contentTypeJson);
-      response.end(JSON.stringify(request.body));
-    }
+  item.save( (  ) => {
+    console.log('New Item Added');
+    response.writeHead(201, contentTypeJson );
+    response.end(JSON.stringify(request.body))
   })
 }
 
@@ -149,10 +142,7 @@ exports.findItemById = function(gfs, request, response){
           response.json(result)
         }
       });
-      // if( response != null){
-      //   response.setHeader('Content-Type', 'application/json');
-      //   response.send(result)
-      // }
+
       console.log(result)
     }
   });

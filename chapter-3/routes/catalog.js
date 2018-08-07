@@ -62,12 +62,23 @@ router.get('/v2/', cache('minutes', 1), function(request, response, next){
   }
 })
 
+router.post('/v2/', function(request, response, next){
+  console.log('Saving item using POST');
+  catalogV2.saveItem(request, response);
+})
+
 router.get('/v2/item/:itemId', function(request, response, next){
   console.log(`${request.url} querying for ${request.params.itemId}`)
   var gfs = Grid(model.connection.db, mongoose.mongo);
   // response.send(request.params)
   catalogV2.findItemById(gfs,request, response)
 })
+
+router.delete('/v2/item/:itemId', function(request, response, next){
+  console.log('Deleting item with id: ', request.params.itemId)
+  catalogV2.remove(request, response)
+})
+
 
 router.get('/v2/item/:itemId/image', function(request, response){
   console.log( request)
