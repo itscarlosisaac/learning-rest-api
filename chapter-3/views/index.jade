@@ -3,3 +3,15 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  table#dataTable.zui-table
+    thead
+      tr
+        th Name
+        th Categories
+        th Price
+        th Currency
+        th Actions
+    tbody
+  input(id="btnDelete" type="button" value="Delete" )
+
+  
